@@ -1,0 +1,19 @@
+[Unit]
+Description=pdf2zh GUI (behind /translate)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=@PDF2ZH@
+Environment=GRADIO_ROOT_PATH=/translate
+Environment=GRADIO_ANALYTICS_ENABLED=False
+Environment=BROWSER=/usr/bin/true
+Environment=NO_PROXY=localhost,127.0.0.1,::1
+Environment=no_proxy=localhost,127.0.0.1,::1
+ExecStart=%h/.pixi/bin/pixi run --locked --manifest-path @PDF2ZH@/pixi.toml gui
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

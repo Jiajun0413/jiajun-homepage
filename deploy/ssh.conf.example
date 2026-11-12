@@ -1,0 +1,16 @@
+# Template for the private SSH config used by jiajun-homepage-tunnel.service.
+# deploy/install.sh derives real values from `ssh -G aliyun` and writes
+# deploy/ssh.conf (git-ignored). Never commit the generated file.
+Host homepage-tunnel
+    HostName @HOSTNAME@
+    Port @PORT@
+    User @USER@
+    IdentityFile @IDENTITY@
+    IdentitiesOnly yes
+    BatchMode yes
+    ExitOnForwardFailure yes
+    StrictHostKeyChecking accept-new
+    ServerAliveInterval 30
+    ServerAliveCountMax 3
+    RemoteForward /run/jiajun-homepage/site.sock 127.0.0.1:8082
+    RemoteForward /run/jiajun-homepage/translate.sock 127.0.0.1:7860

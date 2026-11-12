@@ -1,0 +1,15 @@
+[Unit]
+Description=jiajun0805.cc.cd SSH reverse tunnel (remote Unix sockets)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStartPre=@ROOT@/deploy/tunnel-sockets.sh prepare
+ExecStart=/usr/bin/ssh -F @ROOT@/deploy/ssh.conf -NT homepage-tunnel
+ExecStartPost=@ROOT@/deploy/tunnel-sockets.sh ready
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

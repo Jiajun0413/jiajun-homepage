@@ -1,0 +1,12 @@
+.pixi/
+web/target/
+web/dist/
+web/node_modules/
+web/assets/
+.env
+.env.*
+deploy/ssh.conf
+*.log
+*.pem
+*.key
+.DS_Store
