@@ -1,10 +1,10 @@
-//! 站点入口：server 特性下起 Axum + Dioxus SSR；否则直接 `launch` 到浏览器。
+//! Site entry: Axum + Dioxus SSR under the `server` feature; otherwise `launch` in the browser.
 
 mod app;
 mod model;
 mod site;
 
-// 构建期内容校验模块同时被 build.rs（#[path]）与测试目标引用。
+// The build-time content validator is shared by build.rs (#[path]) and the test target.
 #[cfg(test)]
 #[path = "content.rs"]
 mod content;
@@ -69,9 +69,9 @@ mod server {
         });
     }
 
-    /// 默认只绑定回环地址。`IP`/`PORT` 由 dx serve 注入或 systemd 运行时设置，
-    /// 经 dioxus cli_config 读取（与 fullstack_address_or_localhost 同源）。
-    /// 显式给出的非法值直接 panic，不静默回退。
+    /// Bind loopback by default. `IP`/`PORT` come from dx serve or systemd,
+    /// read through dioxus cli_config (same source as fullstack_address_or_localhost).
+    /// Invalid explicit values panic instead of falling back silently.
     fn address() -> SocketAddr {
         let ip = match std::env::var("IP") {
             Ok(v) => v
@@ -90,8 +90,8 @@ mod server {
 }
 
 #[cfg(any(feature = "server", test))]
-/// RSS 2.0：标题、链接与摘要全部复用构建期生成的 `POSTS`。
-/// `pubDate` 用构建期算好的 RFC822 `rss_date`，而非 ISO 日期。
+/// RSS 2.0: titles, links, and summaries reuse the build-time `POSTS`.
+/// `pubDate` uses the precomputed RFC822 `rss_date`, not the ISO date.
 fn feed_xml() -> String {
     use crate::model::POSTS;
     use crate::site::SITE;
@@ -111,8 +111,8 @@ fn feed_xml() -> String {
     }
     format!(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\"><channel>\
-         <title>{name} · 文章</title><link>{BASE}/</link>\
-         <description>{name}的文章</description><language>zh-CN</language>\
+         <title>{name} · Blog</title><link>{BASE}/</link>\
+         <description>{name}'s notes</description><language>en</language>\
          {items}</channel></rss>",
         name = escape_xml(SITE.name),
     )
@@ -145,7 +145,10 @@ mod tests {
             escape_xml("a&b<c>d\"e'f"),
             "a&amp;b&lt;c&gt;d&quot;e&apos;f"
         );
-        assert_eq!(escape_xml("中文 标题"), "中文 标题");
+        assert_eq!(
+            escape_xml("\u{4e2d}\u{6587} \u{6807}\u{9898}"),
+            "\u{4e2d}\u{6587} \u{6807}\u{9898}"
+        );
     }
 
     #[test]
@@ -153,11 +156,11 @@ mod tests {
         let feed = feed_xml();
         assert!(feed.starts_with("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
         assert!(feed.contains("<rss version=\"2.0\"><channel>"));
-        assert!(feed.contains("<language>zh-CN</language>"));
+        assert!(feed.contains("<language>en</language>"));
         assert!(feed.ends_with("</channel></rss>"));
         assert!(!feed.contains("<script"));
 
-        // 每篇文章的 pubDate 必须是 RFC822，不能是 ISO YYYY-MM-DD。
+        // Every item's pubDate must be RFC822, not ISO YYYY-MM-DD.
         let mut count = 0;
         for part in feed.split("<pubDate>").skip(1) {
             let date = part.split("</pubDate>").next().unwrap();

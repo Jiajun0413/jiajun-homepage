@@ -1,7 +1,7 @@
 [application]
 
 [web.app]
-title = "Liu Jiajun · 文章与项目"
+title = "Liu Jiajun · Blog"
 
 [web.watcher]
 index_on_404 = false

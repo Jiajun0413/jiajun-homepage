@@ -5,7 +5,7 @@ platforms = ["linux-64"]
 version = "0.1.0"
 
 [target.unix.activation.env]
-# dx 只使用 PATH 上的工具，禁止运行时下载(esbuild/wasm-opt/tailwind)
+# dx uses only PATH tools; no runtime downloads (esbuild/wasm-opt/tailwind)
 NO_DOWNLOADS = "1"
 PATH = "$PIXI_PROJECT_ROOT/web/node_modules/.bin:$PATH"
 
@@ -15,7 +15,7 @@ web-check = { cwd = "web", cmd = "cargo check --no-default-features --features s
 web-test = { cwd = "web", cmd = "cargo test --no-default-features --features server" }
 test = { depends-on = ["web-test"] }
 web-dev = { cwd = "web", cmd = "dx serve --fullstack true" }
-# 先用已安装的 CLI 显式编译 CSS，再单次 dx bundle，最后裁剪陈旧哈希资源。
+# Compile CSS with the installed CLI first, then a single dx bundle, then prune stale hashed assets.
 web-build = { cwd = "web", cmd = "node_modules/.bin/tailwindcss -i tailwind.css -o assets/tailwind.css --minify && dx bundle --release --out-dir dist && bash prune-dist.sh" }
 web-clean = { cmd = "rm -rf web/dist web/target web/assets/tailwind.css web/node_modules" }
 web-serve = { cmd = "web/dist/server" }

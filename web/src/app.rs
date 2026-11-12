@@ -1,4 +1,4 @@
-//! 页面骨架与路由。所有条目数据来自 `model::POSTS` 与 `site::PROJECTS`。
+//! Page shell and routes. All entries come from `model::POSTS` and `site::PROJECTS`.
 
 use dioxus::prelude::*;
 
@@ -27,7 +27,7 @@ pub fn App() -> Element {
         document::Title { "{SITE.name} · {SITE.name_latin}" }
         document::Meta {
             name: "description",
-            content: "{SITE.name} 的个人主页：文章、项目与论文翻译工具。"
+            content: "{SITE.name}'s notes, projects, and paper translation tool."
         }
         document::Meta { name: "color-scheme", content: "light dark" }
         document::Stylesheet { href: TAILWIND_CSS }
@@ -35,7 +35,7 @@ pub fn App() -> Element {
     }
 }
 
-/// 全站栅格：编号栏 + 正文列。页面内容全部落在 `main` 内。
+/// Site-wide grid: number column + content column. All content lives in `main`.
 #[component]
 fn Shell(children: Element) -> Element {
     rsx! {
@@ -45,10 +45,10 @@ fn Shell(children: Element) -> Element {
                     span { class: "masthead-cn", "{SITE.name}" }
                     span { class: "masthead-latin", "{SITE.name_latin}" }
                 }
-                nav { class: "nav", "aria-label": "主导航",
-                    Link { to: Route::Archive {}, "文章" }
-                    a { href: "/translate/", "翻译" }
-                    a { href: "/#projects", "项目" }
+                nav { class: "nav", "aria-label": "Main navigation",
+                    Link { to: Route::Archive {}, "Blog" }
+                    a { href: "/translate/", "Translate" }
+                    a { href: "/#projects", "Projects" }
                     a { href: SITE.github, target: "_blank", rel: "noopener", "GitHub ↗" }
                 }
             }
@@ -58,7 +58,7 @@ fn Shell(children: Element) -> Element {
                 div { class: "footer-links",
                     a { href: "mailto:{SITE.email}", "{SITE.email}" }
                     a { href: SITE.github, target: "_blank", rel: "noopener", "GitHub ↗" }
-                    a { href: "https://github.com/Jiajun0413/jiajun-homepage", target: "_blank", rel: "noopener", "源码 ↗" }
+                    a { href: "https://github.com/Jiajun0413/jiajun-homepage", target: "_blank", rel: "noopener", "Source ↗" }
                     a { href: "/feed.xml", "RSS ↗" }
                 }
             }
@@ -66,7 +66,7 @@ fn Shell(children: Element) -> Element {
     }
 }
 
-/// 编号悬挂在左栏，标题与计数落在右栏页眉。
+/// Number hangs in the left column; label and count sit in the right head.
 #[component]
 fn Section(num: &'static str, label: &'static str, count: String, children: Element) -> Element {
     rsx! {
@@ -81,7 +81,7 @@ fn Section(num: &'static str, label: &'static str, count: String, children: Elem
     }
 }
 
-/// 细线索引行：标题 — 引线 — 等宽日期。
+/// Hairline index row: title — leader — monospaced date.
 #[component]
 fn PostRow(post: &'static Post) -> Element {
     rsx! {
@@ -97,12 +97,13 @@ fn PostRow(post: &'static Post) -> Element {
 
 #[component]
 fn Home() -> Element {
-    // 首条已被头条占用，索引补充其后的若干条
+    // The first post is the lead; the index lists the next few.
+    let posts_word = if POSTS.len() == 1 { "post" } else { "posts" };
     let recent: Vec<&Post> = POSTS.iter().skip(1).take(RECENT_ON_POSTS).collect();
     rsx! {
         Shell {
             h1 { class: "visually-hidden", "{SITE.name}" }
-            Section { num: "01", label: "文章", count: format!("{}篇", POSTS.len()),
+            Section { num: "01", label: "Blog", count: format!("{} {}", POSTS.len(), posts_word),
                 if let Some(latest) = POSTS.first() {
                     article { class: "lead",
                         Link { class: "lead-title", to: Route::PostPage { slug: latest.slug.to_string() },
@@ -112,10 +113,10 @@ fn Home() -> Element {
                         p { class: "lead-meta",
                             span { "{latest.date_display}" }
                             span { class: "lead-sep", "aria-hidden": "true" }
-                            span { "{latest.minutes} 分钟" }
+                            span { "{latest.minutes} min read" }
                             if !latest.tags.is_empty() {
                                 span { class: "lead-sep", "aria-hidden": "true" }
-                                span { {latest.tags.join("、")} }
+                                span { {latest.tags.join(", ")} }
                             }
                         }
                     }
@@ -128,11 +129,11 @@ fn Home() -> Element {
                     }
                 }
                 if POSTS.is_empty() {
-                    p { class: "empty", "暂无文章。" }
+                    p { class: "empty", "No posts yet." }
                 }
-                Link { class: "more", to: Route::Archive {}, "全部文章 →" }
+                Link { class: "more", to: Route::Archive {}, "All posts →" }
             }
-            Section { num: "02", label: "项目", count: format!("{:02}", PROJECTS.len()),
+            Section { num: "02", label: "Projects", count: format!("{:02}", PROJECTS.len()),
                 ul { class: "projects", id: "projects",
                     for project in PROJECTS.iter() {
                         li { class: "project",
@@ -157,7 +158,7 @@ fn Home() -> Element {
                     }
                 }
                 if PROJECTS.is_empty() {
-                    p { class: "empty", "暂无项目。" }
+                    p { class: "empty", "No projects yet." }
                 }
             }
         }
@@ -166,6 +167,8 @@ fn Home() -> Element {
 
 #[component]
 fn Archive() -> Element {
+    let count = POSTS.len();
+    let posts_word = if count == 1 { "post" } else { "posts" };
     let mut years: Vec<(&'static str, Vec<&Post>)> = Vec::new();
     for post in POSTS {
         match years.iter_mut().find(|(year, _)| *year == post.year) {
@@ -174,11 +177,11 @@ fn Archive() -> Element {
         }
     }
     rsx! {
-        document::Title { "文章 · {SITE.name}" }
+        document::Title { "Blog · {SITE.name}" }
         Shell {
             header { class: "page-head",
-                h1 { class: "page-title", "文章" }
-                p { class: "page-head-meta", "{POSTS.len()}篇 · 按年" }
+                h1 { class: "page-title", "Blog" }
+                p { class: "page-head-meta", "{count} {posts_word} · By year" }
             }
             for (year, group) in years.iter() {
                 div { class: "year",
@@ -191,7 +194,7 @@ fn Archive() -> Element {
                 }
             }
             if POSTS.is_empty() {
-                p { class: "empty", "暂无文章。" }
+                p { class: "empty", "No posts yet." }
             }
         }
     }
@@ -215,30 +218,30 @@ fn PostPage(slug: String) -> Element {
                     h1 { class: "post-title", "{post.title}" }
                     p { class: "post-meta",
                         span { class: "post-meta-date", "{post.date_display}" }
-                        span { "{post.minutes} 分钟" }
+                        span { "{post.minutes} min read" }
                         if !post.tags.is_empty() {
-                            span { {post.tags.join("、")} }
+                            span { {post.tags.join(", ")} }
                         }
                     }
                 }
                 div { class: "prose", dangerous_inner_html: post.html }
             }
-            nav { class: "post-nav", "aria-label": "文章导航",
+            nav { class: "post-nav", "aria-label": "Post navigation",
                 if let Some(newer) = newer {
                     Link { class: "post-nav-row", to: Route::PostPage { slug: newer.slug.to_string() },
-                        span { class: "post-nav-lab", "较新" }
+                        span { class: "post-nav-lab", "Newer" }
                         span { class: "post-nav-title", "{newer.title}" }
                     }
                 }
                 if let Some(older) = older {
                     Link { class: "post-nav-row post-nav-older", to: Route::PostPage { slug: older.slug.to_string() },
-                        span { class: "post-nav-lab", "较旧" }
+                        span { class: "post-nav-lab", "Older" }
                         span { class: "post-nav-title", "{older.title}" }
                     }
                 }
             }
             div { class: "post-foot",
-                Link { class: "more", to: Route::Archive {}, "← 全部文章" }
+                Link { class: "more", to: Route::Archive {}, "← All posts" }
             }
         }
     }
@@ -248,13 +251,13 @@ fn PostPage(slug: String) -> Element {
 fn NotFound(segments: Vec<String>) -> Element {
     let path = format!("/{}", segments.join("/"));
     rsx! {
-        document::Title { "页面不存在 · {SITE.name}" }
+        document::Title { "Page not found · {SITE.name}" }
         Shell {
             div { class: "notice",
                 p { class: "notice-code", "404" }
-                h1 { class: "notice-title", "页面不存在" }
-                p { class: "empty", "{path} 没有对应内容。" }
-                Link { class: "more", to: Route::Home {}, "返回首页" }
+                h1 { class: "notice-title", "Page not found" }
+                p { class: "empty", "{path} is not available." }
+                Link { class: "more", to: Route::Home {}, "Home" }
             }
         }
     }

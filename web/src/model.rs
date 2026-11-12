@@ -1,4 +1,4 @@
-//! 站点事实与内容模型。博客文章在构建期由 `build.rs` 生成（见 `content/posts/`）。
+//! Site facts and content model. Posts are generated at build time by `build.rs` (see `content/posts/`).
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct Post {
@@ -21,7 +21,7 @@ impl Post {
         POSTS.iter().find(|post| post.slug == slug)
     }
 
-    /// 上一篇（更新）/ 下一篇（更旧），列表已按日期倒序。
+    /// Returns (newer, older); the list is sorted newest first.
     pub fn neighbours(&self) -> (Option<&'static Self>, Option<&'static Self>) {
         let Some(index) = POSTS.iter().position(|post| post.slug == self.slug) else {
             return (None, None);

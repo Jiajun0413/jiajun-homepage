@@ -157,7 +157,7 @@ mod tests {
             "Upper",
             "under_score",
             "has space",
-            "uni中文",
+            "uni\u{4e2d}\u{6587}",
             "dot.name",
         ] {
             assert!(

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 @source "./src/**/*.rs";
 
-/* 自托管子集（GB2312 汉字子集 + ASCII + 常用标点），见 web/public/fonts/。
-   放在最前，保证任何系统字体栈之外先命中本站字体。 */
+/* Self-hosted GB2312 Han subset + ASCII + punctuation (web/public/fonts/).
+   Listed first so it wins over system font stacks. */
 @font-face {
   font-family: "Noto Serif SC";
   font-style: normal;
@@ -20,7 +20,7 @@
 }
 
 /* ============================================================
-   刊物扉页 — a printed-journal title page.
+   Printed-journal title page.
    Paper / ink / vermilion. Number column, hairline index,
    monospaced dates. No cards, no shadows, no gradients.
    ============================================================ */
@@ -40,15 +40,15 @@
 
   --serif: "Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC",
     "Source Han Serif CN", "Songti SC", STSong, "SimSun", Georgia, serif;
-  /* 自托管子集：GB2312 汉字子集 + ASCII + 常用标点，400/600 各一档。
-     不依赖 Google Fonts，国内直连可命中；未安装系统 CJK 字体时也不掉成方框。 */
+  /* Self-hosted GB2312 Han subset + ASCII + punctuation, 400/600 weights.
+     No Google Fonts; works without system CJK fonts, no missing-glyph boxes. */
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo,
     Consolas, "Liberation Mono", monospace;
-  /* 等宽栈没有 CJK：中文日期/计数回退到自托管宋体，避免落进缺字方框 */
+  /* Mono stack has no CJK; CJK glyphs fall back to the self-hosted serif, no missing-glyph boxes. */
   --mono-cjk: ui-monospace, "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo,
     Consolas, "Liberation Mono", "Noto Serif SC", monospace;
 
-  /* 版心几何：编号栏 / 栏距 / 正文度量 */
+  /* Page geometry: number column / gap / text measure */
   --gutter: 132px;
   --gap: 40px;
   --measure: 40rem;
@@ -84,7 +84,7 @@
   border: 0;
 }
 
-/* dx SSR 把页面塞进 #main，body 由宿主文档提供，故栅格落在 .page 上 */
+/* dx SSR puts the page in #main and the host document owns body, so the grid sits on .page */
 html,
 body {
   background: var(--paper);
@@ -211,7 +211,7 @@ a {
   text-underline-offset: 6px;
 }
 
-/* ---------- 版心 ---------- */
+/* ---------- content column ---------- */
 
 .column {
   position: relative;
@@ -222,7 +222,7 @@ a {
   padding-bottom: 64px;
 }
 
-/* 通栏竖线：从报头下缘一直贯到页脚 */
+/* Full-height rule: from the masthead down to the footer */
 .column::before {
   content: "";
   position: absolute;
@@ -302,7 +302,7 @@ a {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- 头条 ---------- */
+/* ---------- lead ---------- */
 
 .lead {
   position: relative;
@@ -362,7 +362,7 @@ a {
   background: var(--rule-strong);
 }
 
-/* ---------- 细线索引 ---------- */
+/* ---------- hairline index ---------- */
 
 .index {
   margin: 0;
@@ -424,14 +424,14 @@ a {
   color: var(--ink-soft);
 }
 
-/* 整行可点时，描边收细一档，避免压过索引细线 */
+/* When the whole row is clickable, thin the focus ring so it does not outweigh the index hairline */
 .index-row:focus-visible,
 .post-nav-row:focus-visible {
   outline-width: 1px;
   outline-offset: 2px;
 }
 
-/* ---------- 年份分组 ---------- */
+/* ---------- year groups ---------- */
 
 .year {
   grid-column: 1 / -1;
@@ -468,7 +468,7 @@ a {
   grid-column: 2;
 }
 
-/* ---------- 项目 ---------- */
+/* ---------- projects ---------- */
 
 .projects {
   margin: 0;
@@ -558,7 +558,7 @@ a {
   text-decoration-color: var(--accent);
 }
 
-/* ---------- 全部文章 ---------- */
+/* ---------- all posts ---------- */
 
 .more {
   display: inline-flex;
@@ -580,7 +580,7 @@ a {
   text-decoration-color: var(--accent);
 }
 
-/* ---------- 空状态 ---------- */
+/* ---------- empty state ---------- */
 
 .empty {
   margin: 0;
@@ -596,14 +596,14 @@ a {
   border-top: 0;
 }
 
-/* 归档页空态直接落在 .column 内，与正文列对齐 */
+/* The archive empty state sits in .column, aligned with the content column */
 .column > .empty {
   grid-column: 2;
   margin-top: 12px;
   border-top: 0;
 }
 
-/* ---------- 文章页页眉 / 归档页页眉 ---------- */
+/* ---------- post header / archive header ---------- */
 
 .post {
   grid-column: 1 / -1;
@@ -927,7 +927,7 @@ a {
   margin: 0;
 }
 
-/* ---------- 文章页边栏：等宽年份 + 日期 ---------- */
+/* ---------- post sidebar: monospaced year + date ---------- */
 
 .post-folio {
   grid-column: 1;
@@ -951,7 +951,7 @@ a {
   color: var(--accent);
 }
 
-/* 132px 栏放得下完整日期时，日期移到边栏，meta 行只留时长与标签 */
+/* At 132px the full date fits in the sidebar; the meta line keeps only reading time and tags */
 @media (min-width: 1024px) {
   .post-meta-date {
     display: none;
@@ -963,14 +963,14 @@ a {
   }
 }
 
-/* 40px 栏只能容下年份，日期仍留在 meta 行 */
+/* At 40px only the year fits; the date stays in the meta line */
 @media (max-width: 1023px) {
   .post-folio-date {
     display: none;
   }
 }
 
-/* ---------- 上一篇 / 下一篇 ---------- */
+/* ---------- newer / older ---------- */
 
 .post-nav {
   grid-column: 1 / -1;
@@ -1026,7 +1026,7 @@ a {
   margin-bottom: 12px;
 }
 
-/* 没有上/下一篇时，返回入口自带一条细线 */
+/* With no neighbouring posts, the back link carries its own hairline */
 .post + .post-foot {
   margin-top: 8px;
   padding-top: 4px;
@@ -1133,7 +1133,7 @@ a {
     font-size: 16.5px;
   }
 
-  /* 40px 栏放不下三字姓名，报头改为整行排布 */
+  /* At 40px the name does not fit the column, so the masthead becomes a single row */
   .masthead {
     display: flex;
     flex-wrap: wrap;
@@ -1189,7 +1189,7 @@ a {
     line-height: 1.82;
   }
 
-  /* 竖线在 24px 栏宽下会贴住正文，改为横向分隔 */
+  /* At 24px the rule would crowd the text, so switch to horizontal dividers */
   .column::before {
     display: none;
   }
@@ -1222,7 +1222,7 @@ a {
     font-size: 13px;
   }
 
-  /* 手机：编号退成 24px 悬挂栏，正文回到通栏 */
+  /* Phone: numbers become a 24px hanging column; content spans full width */
   .section {
     display: block;
     padding: 28px 0 4px;
@@ -1328,7 +1328,7 @@ a {
     padding-top: 26px;
   }
 
-  /* 24px 栏放不下年份，日期回到 meta 行 */
+  /* At 24px the year does not fit; the date returns to the meta line */
   .post-folio {
     display: none;
   }
@@ -1399,7 +1399,7 @@ a {
   }
 }
 
-/* ---------- 页面底部的极窄兜底 ---------- */
+/* ---------- very narrow screens ---------- */
 
 @media (max-width: 359px) {
   .index-leader,
@@ -1412,7 +1412,7 @@ a {
   }
 }
 
-/* ---------- print：文章页 ---------- */
+/* ---------- print: post page ---------- */
 
 @media print {
   :root {

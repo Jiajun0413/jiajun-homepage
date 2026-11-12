@@ -1,6 +1,8 @@
 jiajun0805.cc.cd, www.jiajun0805.cc.cd {
 	tls /etc/caddy/certs/jiajun0805.cc.cd.pem /etc/caddy/certs/jiajun0805.cc.cd.key
 	encode gzip
+	@translation path /translate /translate/*
+	header @translation Cache-Control "private, no-store"
 	header {
 		X-Content-Type-Options nosniff
 		Referrer-Policy strict-origin-when-cross-origin

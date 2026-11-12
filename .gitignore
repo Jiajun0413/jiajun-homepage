@@ -5,6 +5,8 @@ web/node_modules/
 web/assets/
 .env
 .env.*
+access.csv
+*.auth-state.json
 deploy/ssh.conf
 *.log
 *.pem
