@@ -28,7 +28,7 @@ chmod 600 "$root/deploy/ssh.conf"
 install -d "$units"
 sed -e "s|@ROOT@|$root|g"   "$root/deploy/systemd/jiajun-homepage.service"        > "$units/jiajun-homepage.service"
 sed -e "s|@ROOT@|$root|g"   "$root/deploy/systemd/jiajun-homepage-tunnel.service" > "$units/jiajun-homepage-tunnel.service"
-sed -e "s|@PDF2ZH@|$pdf2zh|g" "$root/deploy/systemd/pdf2zh.service"               > "$units/pdf2zh.service"
+sed -e "s|@PDF2ZH@|$pdf2zh|g" -e "s|@ROOT@|$root|g" "$root/deploy/systemd/pdf2zh.service" > "$units/pdf2zh.service"
 
 systemctl --user daemon-reload
 systemctl --user enable jiajun-homepage.service jiajun-homepage-tunnel.service pdf2zh.service

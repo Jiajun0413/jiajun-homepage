@@ -7,7 +7,7 @@ Rust 2024 + Dioxus 0.7 fullstack + Axum + Tailwind 4. Pixi manages build depende
 - Write concise English throughout the repository. Remove filler and duplicate explanations.
 - Use `codebase-design`: content parsing and validation stay in one Module; pages consume its small `Post` Interface. Add a Seam only for a real variation.
 - Keep the blog layout restrained. UI design belongs to the designer; mechanical copy edits need no redesign.
-- Use verified names, links, and attribution. Jiajun0413 is an upstream contributor to oh-my-opencode-slim.
+- Use verified names, links, and attribution. Jiajun0413 is a collaborator on oh-my-opencode-slim.
 - Do not add a CMS, database, or speculative abstractions.
 
 ## Files
@@ -23,7 +23,7 @@ Rust 2024 + Dioxus 0.7 fullstack + Axum + Tailwind 4. Pixi manages build depende
 
 Run `pixi run web-check`, `pixi run test`, then `pixi run web-build`. Check both server and wasm targets. Compile CSS before bundling; verify shipped assets and changed content. Reconcile writers before final checks and reuse valid evidence.
 
-Use `bash deploy/deploy.sh` to stop the exact server before replacing its executable. Never use broad `pkill` patterns or change the user's 8081/9000 routes. Validate Caddy as `caddy` before reload.
+Use `bash deploy/deploy.sh` to stop the exact server before replacing its executable. Never use broad `pkill` patterns. Keep existing 8081/9000 upstreams intact unless explicitly requested. Use Caddy defaults; validate as `caddy` before reload.
 
 The translator uses native Gradio login. Credentials live in `~/.config/pdf2zh/access.csv`, outside Git. Missing credentials must prevent startup. Keep config, uploads, keys, session files, logs, generated bundles, and environments out of commits.
 

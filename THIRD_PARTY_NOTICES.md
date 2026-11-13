@@ -16,4 +16,4 @@ The current runtime is PyPI `pdf2zh-next==2.10.2`, installed through the sibling
 
 ## Project attribution
 
-Jiajun0413 contributes to [oh-my-opencode-slim](https://github.com/alvinunreal/oh-my-opencode-slim). The 10k+ star label refers to upstream, verified on 2026-11-12, not the personal fork.
+Jiajun0413 is a collaborator on [oh-my-opencode-slim](https://github.com/alvinunreal/oh-my-opencode-slim). The 10k+ star label refers to upstream, not the personal fork.

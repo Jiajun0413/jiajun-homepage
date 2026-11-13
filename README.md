@@ -2,7 +2,7 @@
 
 A small blog with project links and a password-protected paper translator.
 
-[Website](https://jiajun0805.cc.cd/) · [Blog](https://jiajun0805.cc.cd/blog) · [RSS](https://jiajun0805.cc.cd/feed.xml) · [Translator](https://jiajun0805.cc.cd/translate/)
+[Website](https://jiajun0805.cc.cd/) · [Blog](https://jiajun0805.cc.cd/blog) · [RSS](https://jiajun0805.cc.cd/feed.xml) · [Translator](https://jiajun0805.cc.cd/translate/) · [ORCID](https://orcid.org/0009-0004-4258-2237)
 
 ## Stack
 
@@ -54,7 +54,7 @@ Profile and projects: `web/src/site.rs`. Layout and styles: `web/src/app.rs` and
 
 See [deploy/README.md](deploy/README.md).
 
-Cloudflare routes to Caddy on Aliyun. SSH Unix sockets connect Caddy to the homepage on `127.0.0.1:8082` and pdf2zh on port `7860`. Three systemd user units keep the apps and tunnel running. The existing platform routes remain separate.
+Cloudflare routes to Caddy on Aliyun. SSH Unix sockets connect Caddy to the homepage on `127.0.0.1:8082` and pdf2zh on port `7860`. Three systemd user units keep the apps and tunnel running. `deploy/Caddyfile` records all three sites with explicit routes and Caddy defaults.
 
 The translator uses pdf2zh's native login, including direct access to port 7860. Credentials stay outside this repository. The current runtime is the locked PyPI package `pdf2zh-next==2.10.2`, not the sibling checkout's Python source. Translation provider credentials and uploaded files also remain outside this repository.
 

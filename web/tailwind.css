@@ -48,12 +48,12 @@
   --mono-cjk: ui-monospace, "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo,
     Consolas, "Liberation Mono", "Noto Serif SC", monospace;
 
-  /* Page geometry: number column / gap / text measure */
+  /* Wide index, bounded article measure. */
   --gutter: 132px;
-  --gap: 40px;
-  --measure: 40rem;
-  --pad: clamp(20px, 5vw, 64px);
-  --frame: calc(var(--gutter) + var(--gap) + var(--measure));
+  --gap: 48px;
+  --measure: 46rem;
+  --pad: clamp(32px, 3.5vw, 64px);
+  --frame: min(1440px, calc(100vw - 64px));
 }
 
 @media (prefers-color-scheme: dark) {
@@ -108,7 +108,8 @@ body {
 }
 
 .page {
-  max-width: calc(var(--frame) + var(--pad) * 2);
+  width: 100%;
+  max-width: var(--frame);
   margin: 0 auto;
   padding: 0 var(--pad);
   background: var(--paper);
@@ -142,7 +143,7 @@ a {
 
 .masthead {
   display: grid;
-  grid-template-columns: var(--gutter) minmax(0, var(--measure));
+  grid-template-columns: var(--gutter) minmax(0, 1fr);
   column-gap: var(--gap);
   align-items: start;
   padding: 20px 0 16px;
@@ -216,7 +217,7 @@ a {
 .column {
   position: relative;
   display: grid;
-  grid-template-columns: var(--gutter) minmax(0, var(--measure));
+  grid-template-columns: var(--gutter) minmax(0, 1fr);
   column-gap: var(--gap);
   align-content: start;
   padding-bottom: 64px;
@@ -241,7 +242,7 @@ a {
 
 .section {
   display: grid;
-  grid-template-columns: var(--gutter) minmax(0, var(--measure));
+  grid-template-columns: var(--gutter) minmax(0, 1fr);
   column-gap: var(--gap);
   align-items: start;
   padding: 44px 0 8px;
@@ -254,9 +255,7 @@ a {
 
 .section-body {
   grid-column: 2;
-  justify-self: start;
-  width: 100%;
-  max-width: var(--measure);
+  min-width: 0;
 }
 
 .section + .section {
@@ -305,18 +304,16 @@ a {
 /* ---------- lead ---------- */
 
 .lead {
-  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 20px 64px;
+  align-items: start;
   padding-bottom: 26px;
+  border-bottom: 1px solid var(--rule-strong);
 }
 
-.lead::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--rule-strong);
+.lead-heading {
+  min-width: 0;
 }
 
 .lead-title {
@@ -336,10 +333,10 @@ a {
 }
 
 .lead-summary {
-  margin: 14px 0 0;
-  max-width: 34rem;
-  font-size: 15.5px;
-  line-height: 1.9;
+  margin: 3px 0 0;
+  max-width: none;
+  font-size: 16px;
+  line-height: 1.85;
   color: var(--ink-soft);
   text-wrap: pretty;
 }
@@ -436,7 +433,7 @@ a {
 .year {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: var(--gutter) minmax(0, var(--measure));
+  grid-template-columns: var(--gutter) minmax(0, 1fr);
   column-gap: var(--gap);
   align-items: start;
   padding-top: 10px;
@@ -466,28 +463,36 @@ a {
 
 .year .index {
   grid-column: 2;
+  max-width: var(--measure);
 }
 
 /* ---------- projects ---------- */
 
 .projects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 64px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .project {
+  min-width: 0;
   padding: 16px 0;
-}
-
-.project + .project {
   border-top: 1px solid var(--rule);
 }
 
+.project:nth-child(-n + 2) {
+  border-top-color: var(--rule-strong);
+}
+
 .project-line {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(12px, 1fr) auto;
   align-items: baseline;
-  gap: 12px;
+  gap: 0 10px;
+  min-width: 0;
   min-height: 44px;
 }
 
@@ -505,7 +510,8 @@ a {
 
 .project-leader {
   flex: 1 1 16px;
-  min-width: 16px;
+  width: 100%;
+  min-width: 12px;
   height: 1px;
   margin-bottom: 0.3em;
   background: var(--rule);
@@ -531,7 +537,7 @@ a {
 
 .project-summary {
   margin: 5px 0 0;
-  max-width: 34rem;
+  max-width: none;
   font-size: 14.5px;
   line-height: 1.85;
   color: var(--ink-soft);
@@ -608,7 +614,7 @@ a {
 .post {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: var(--gutter) minmax(0, var(--measure));
+  grid-template-columns: var(--gutter) minmax(0, 1fr);
   column-gap: var(--gap);
   align-items: start;
   padding: 44px 0 0;
@@ -622,6 +628,7 @@ a {
 
 .page-head {
   grid-column: 2;
+  max-width: var(--measure);
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -648,6 +655,19 @@ a {
   letter-spacing: 0.1em;
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
+}
+
+.page-head-meta a {
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 3px;
+}
+
+.page-head-meta a:hover,
+.page-head-meta a:focus-visible {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
 }
 
 .post-meta {
@@ -677,6 +697,12 @@ a {
   letter-spacing: 0.01em;
   color: var(--ink);
   text-wrap: balance;
+}
+
+.post-head,
+.prose,
+.post-foot .more {
+  max-width: var(--measure);
 }
 
 .prose {
@@ -974,6 +1000,7 @@ a {
 
 .post-nav {
   grid-column: 1 / -1;
+  max-width: calc(var(--gutter) + var(--gap) + var(--measure));
   display: flex;
   gap: 0 36px;
   margin-top: 30px;
@@ -1021,7 +1048,7 @@ a {
 .post-foot {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: var(--gutter) minmax(0, var(--measure));
+  grid-template-columns: var(--gutter) minmax(0, 1fr);
   column-gap: var(--gap);
   margin-bottom: 12px;
 }
@@ -1042,7 +1069,7 @@ a {
 
 .notice {
   display: grid;
-  grid-template-columns: var(--gutter) minmax(0, var(--measure));
+  grid-template-columns: var(--gutter) minmax(0, 1fr);
   column-gap: var(--gap);
   padding: 56px 0 0;
 }
@@ -1095,7 +1122,7 @@ a {
 .footer-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 22px;
+  gap: 0 24px;
 }
 
 .footer-links a {
@@ -1280,6 +1307,10 @@ a {
     padding-left: 0;
   }
 
+  .lead {
+    display: block;
+  }
+
   .lead-title {
     margin-top: 8px;
     padding: 6px 0;
@@ -1313,6 +1344,22 @@ a {
 
   .index-date {
     font-size: 10.5px;
+  }
+
+  .projects {
+    display: block;
+  }
+
+  .project {
+    border-top: 1px solid var(--rule);
+  }
+
+  .project:first-child {
+    border-top-color: var(--rule-strong);
+  }
+
+  .project-line {
+    grid-template-columns: minmax(0, auto) minmax(8px, 1fr) auto;
   }
 
   .project-name {

@@ -20,7 +20,12 @@ The installer derives connection details from `ssh -G aliyun`, creates private `
 
 Install `tmpfiles.d/jiajun-homepage.conf` on Aliyun at `/etc/tmpfiles.d/jiajun-homepage.conf`, then apply that file with `systemd-tmpfiles --create`. The socket directory is `2750 admin:caddy`; the tunnel hooks set only the two app sockets to `0770`. No global sshd changes are needed.
 
-Add `Caddyfile.jiajun` to `/etc/caddy/Caddyfile`. Keep other site blocks intact. Validate as `caddy`, then reload. Access logs must be writable by that user.
+`Caddyfile` covers all three sites. Install it at `/etc/caddy/Caddyfile`, validate as `caddy`, then reload.
+
+- `pisd.cc.cd`: the upstream handles gzip.
+- `sbdssp.cc.cd` and the homepage: `encode` uses Caddy's default zstd/gzip negotiation.
+- `log` sends access logs to journald. Proxy transport and connection pools use their defaults.
+- The Cloudflare trust list preserves real client IPs; the translator keeps its private-cache and upload limits.
 
 The current origin certificate is self-signed and Cloudflare uses **Full**. Full (strict) requires a trusted origin certificate.
 

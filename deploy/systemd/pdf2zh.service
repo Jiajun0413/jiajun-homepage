@@ -11,7 +11,7 @@ Environment=GRADIO_ANALYTICS_ENABLED=False
 Environment=BROWSER=/usr/bin/true
 Environment=NO_PROXY=localhost,127.0.0.1,::1
 Environment=no_proxy=localhost,127.0.0.1,::1
-ExecStartPre=/usr/bin/test -s %h/.config/pdf2zh/access.csv
+ExecStartPre=@ROOT@/deploy/check-auth.sh %h/.config/pdf2zh/access.csv
 ExecStart=%h/.pixi/bin/pixi run --locked --manifest-path @PDF2ZH@/pixi.toml gui -- --auth-file %h/.config/pdf2zh/access.csv --ui-lang en
 Restart=on-failure
 RestartSec=5

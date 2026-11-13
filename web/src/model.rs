@@ -45,5 +45,6 @@ pub struct Site {
     pub name_latin: &'static str,
     pub meta_line: &'static str,
     pub github: &'static str,
+    pub orcid: &'static str,
     pub email: &'static str,
 }

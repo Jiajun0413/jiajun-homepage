@@ -58,6 +58,7 @@ fn Shell(children: Element) -> Element {
                 div { class: "footer-links",
                     a { href: "mailto:{SITE.email}", "{SITE.email}" }
                     a { href: SITE.github, target: "_blank", rel: "noopener", "GitHub ↗" }
+                    a { href: SITE.orcid, target: "_blank", rel: "noopener", "ORCID ↗" }
                     a { href: "https://github.com/Jiajun0413/jiajun-homepage", target: "_blank", rel: "noopener", "Source ↗" }
                     a { href: "/feed.xml", "RSS ↗" }
                 }
@@ -106,19 +107,21 @@ fn Home() -> Element {
             Section { num: "01", label: "Blog", count: format!("{} {}", POSTS.len(), posts_word),
                 if let Some(latest) = POSTS.first() {
                     article { class: "lead",
-                        Link { class: "lead-title", to: Route::PostPage { slug: latest.slug.to_string() },
-                            "{latest.title}"
-                        }
-                        p { class: "lead-summary", "{latest.summary}" }
-                        p { class: "lead-meta",
-                            span { "{latest.date_display}" }
-                            span { class: "lead-sep", "aria-hidden": "true" }
-                            span { "{latest.minutes} min read" }
-                            if !latest.tags.is_empty() {
+                        div { class: "lead-heading",
+                            Link { class: "lead-title", to: Route::PostPage { slug: latest.slug.to_string() },
+                                "{latest.title}"
+                            }
+                            p { class: "lead-meta",
+                                span { "{latest.date_display}" }
                                 span { class: "lead-sep", "aria-hidden": "true" }
-                                span { {latest.tags.join(", ")} }
+                                span { "{latest.minutes} min read" }
+                                if !latest.tags.is_empty() {
+                                    span { class: "lead-sep", "aria-hidden": "true" }
+                                    span { {latest.tags.join(", ")} }
+                                }
                             }
                         }
+                        p { class: "lead-summary", "{latest.summary}" }
                     }
                 }
                 if !recent.is_empty() {
@@ -181,7 +184,11 @@ fn Archive() -> Element {
         Shell {
             header { class: "page-head",
                 h1 { class: "page-title", "Blog" }
-                p { class: "page-head-meta", "{count} {posts_word} · By year" }
+                p { class: "page-head-meta",
+                    span { "{count} {posts_word} · By year" }
+                    span { " · " }
+                    a { href: SITE.orcid, target: "_blank", rel: "noopener", "ORCID ↗" }
+                }
             }
             for (year, group) in years.iter() {
                 div { class: "year",

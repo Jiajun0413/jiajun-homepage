@@ -7,15 +7,23 @@ pub static SITE: Site = Site {
     name_latin: "@Jiajun0413",
     meta_line: "Code, tools, and notes.",
     github: "https://github.com/Jiajun0413",
+    orcid: "https://orcid.org/0009-0004-4258-2237",
     email: "jiajun_liu0805@foxmail.com",
 };
 
 pub static PROJECTS: &[Project] = &[
     Project {
         name: "oh-my-opencode-slim",
-        note: "10k+ stars · Contributor",
+        note: "10k+ stars · Collaborator",
         summary: "Multi-agent orchestration for OpenCode.",
         href: "https://github.com/alvinunreal/oh-my-opencode-slim",
+        link_label: None,
+    },
+    Project {
+        name: "pixi-skill",
+        note: "Skill",
+        summary: "Pixi manifests, environments, tasks, and global tools.",
+        href: "https://github.com/Jiajun0413/pixi-skill",
         link_label: None,
     },
     Project {
