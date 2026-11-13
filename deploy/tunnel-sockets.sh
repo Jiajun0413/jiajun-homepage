@@ -31,6 +31,12 @@ case "$1" in
             if [ -S "$site" ] && [ -S "$translate" ]; then
                 chmod 0770 "$site" "$translate"
                 stat -c '%a %U %G %n' "$site" "$translate"
+                # Replacing the socket inode leaves Caddy's pooled connections on the old inode.
+                # A graceful reload drops them so Caddy reconnects to the current inode.
+                if ! sudo -n systemctl reload caddy; then
+                    echo "caddy reload failed" >&2
+                    exit 1
+                fi
                 exit 0
             fi
             remaining=$((remaining - 1))

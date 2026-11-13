@@ -18,7 +18,7 @@ loginctl enable-linger "$USER"
 
 The installer derives connection details from `ssh -G aliyun`, creates private `deploy/ssh.conf`, and enables three user units. It does not start them or copy private keys.
 
-Install `tmpfiles.d/jiajun-homepage.conf` on Aliyun at `/etc/tmpfiles.d/jiajun-homepage.conf`, then apply that file with `systemd-tmpfiles --create`. The socket directory is `2750 admin:caddy`; the tunnel hooks set only the two app sockets to `0770`. No global sshd changes are needed.
+Install `tmpfiles.d/jiajun-homepage.conf` on Aliyun at `/etc/tmpfiles.d/jiajun-homepage.conf`, then apply that file with `systemd-tmpfiles --create`. The socket directory is `2750 admin:caddy`; the tunnel hooks set only the two app sockets to `0770`. Once the new sockets are ready, the hook gracefully reloads Caddy to reconnect its upstream pool. No global sshd changes are needed.
 
 `Caddyfile` covers all three sites. Install it at `/etc/caddy/Caddyfile`, validate as `caddy`, then reload.
 
