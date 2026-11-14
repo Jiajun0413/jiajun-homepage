@@ -1,37 +1,65 @@
-# Deployment
+# Production startup
 
-Cloudflare → Caddy on Aliyun → SSH Unix sockets → local apps.
+The apps run on the local machine. Aliyun runs only Caddy and the SSH forwarding endpoints.
 
-| Route | Remote socket | Local app |
+| Public route | Aliyun endpoint | Local process |
 | --- | --- | --- |
-| `/`, `/blog`, `/feed.xml` | `site.sock` | `127.0.0.1:8082` |
-| `/translate/` | `translate.sock` | `127.0.0.1:7860` |
+| `https://jiajun0805.cc.cd/` | `site.sock` | Homepage, port 8082 |
+| `https://jiajun0805.cc.cd/translate/` | `translate.sock` | pdf2zh, port 7860 |
 
-## Install
+Caddy listens on HTTPS port 443. The tunnel forwards Unix sockets, not public TCP ports 8082/7860. Requests still execute on the local machine. The separate machine's 8081/9000 forwards are unchanged.
 
-Requires `ssh aliyun`, remote `sudo -n`, and a configured `pdf2zh-next` Pixi project beside this repository.
+## 1. Start Aliyun
+
+The server is already configured. From your terminal:
 
 ```sh
+ssh -o ClearAllForwardings=yes aliyun
+sudo -i
+systemd-tmpfiles --create /etc/tmpfiles.d/jiajun-homepage.conf
+runuser -u caddy -- caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+systemctl enable --now caddy
+systemctl status caddy --no-pager
+exit
+exit
+```
+
+After editing the Caddyfile, run `systemctl reload caddy` as root. Do not restart Caddy for config changes.
+
+## 2. Start the local apps and tunnel
+
+On the machine holding this repository and `pdf2zh-next`:
+
+```sh
+cd /mnt/netshare2/liujiajun/jiajun_homepage
+systemctl --user start jiajun-homepage.service pdf2zh.service
+systemctl --user start jiajun-homepage-tunnel.service
+systemctl --user status jiajun-homepage.service pdf2zh.service jiajun-homepage-tunnel.service --no-pager
+```
+
+These are production services, not `dx serve`. They stay running after you close the terminal. Linger and the enabled user units start them after reboot.
+
+The tunnel uses its own SSH config. Do not open another tunnel to the same socket paths from another machine.
+
+## One-time local setup
+
+Requires Pixi, Rust, `ssh aliyun`, remote `sudo -n`, and a configured sibling `pdf2zh-next` project:
+
+```sh
+pixi install --locked
+pixi run install-web-tools
+pixi run web-build
 bash deploy/install.sh
 loginctl enable-linger "$USER"
 ```
 
-The installer derives connection details from `ssh -G aliyun`, creates private `deploy/ssh.conf`, and enables three user units. It does not start them or copy private keys.
+The installer creates private `deploy/ssh.conf` and installs the user units. It does not start them or copy keys. On a new Aliyun server, install `deploy/Caddyfile`, the existing certificates, and `deploy/tmpfiles.d/jiajun-homepage.conf` before starting the tunnel. The current origin certificate is self-signed; Cloudflare must use **Full**, not Full (strict).
 
-Install `tmpfiles.d/jiajun-homepage.conf` on Aliyun at `/etc/tmpfiles.d/jiajun-homepage.conf`, then apply that file with `systemd-tmpfiles --create`. The socket directory is `2750 admin:caddy`; the tunnel hooks set only the two app sockets to `0770`. Once the new sockets are ready, the hook gracefully reloads Caddy to reconnect its upstream pool. No global sshd changes are needed.
-
-`Caddyfile` covers all three sites. Install it at `/etc/caddy/Caddyfile`, validate as `caddy`, then reload.
-
-- `pisd.cc.cd`: the upstream handles gzip.
-- `sbdssp.cc.cd` and the homepage: `encode` uses Caddy's default zstd/gzip negotiation.
-- `log` sends access logs to journald. Proxy transport and connection pools use their defaults.
-- The Cloudflare trust list preserves real client IPs; the translator keeps its private-cache and upload limits.
-
-The current origin certificate is self-signed and Cloudflare uses **Full**. Full (strict) requires a trusted origin certificate.
+The socket directory is `2750 admin:caddy`; the tunnel hooks set socket permissions to `0770`. After rebuilding the sockets, the hook gracefully reloads Caddy to replace its old upstream connections.
 
 ## Translator login
 
-Create a private credential file before starting pdf2zh. Each line is `username,password`, as required by pdf2zh:
+The existing credentials are in `~/.config/pdf2zh/access.csv`, outside Git. To create or change them:
 
 ```sh
 mkdir -p "$HOME/.config/pdf2zh"
@@ -41,30 +69,27 @@ printf '\n'
 printf 'ljj,%s\n' "$translator_password" > "$HOME/.config/pdf2zh/access.csv"
 unset translator_password
 chmod 600 "$HOME/.config/pdf2zh/access.csv"
+systemctl --user restart pdf2zh.service
 ```
 
-The unit refuses to start without a nonempty credential file. Native Gradio login protects config, upload, queue, and download routes, including direct access to port 7860. Caddy marks translation responses `private, no-store`. The homepage stays public.
+The unit rejects missing or malformed credentials. Restarting pdf2zh invalidates existing logins; sign in again. Native login protects config, upload, queue, and download routes. Caddy sends `private, no-store` for translation responses. If enabling login on a previously public instance, purge its old Cloudflare cache once.
 
-When enabling login on a previously public instance, purge its existing Cloudflare cache once. The new response headers do not remove files already cached at the edge.
-
-The service uses the existing locked `gui` task, disables sensitive settings inputs and autosave, and sets `GRADIO_ROOT_PATH=/translate`. Restart pdf2zh after changing credentials. Keep provider keys and private documents out of Git.
-
-## Publish
+## Publish a code or post update
 
 ```sh
-systemctl --user start jiajun-homepage-tunnel.service
 bash deploy/deploy.sh
-systemctl --user start pdf2zh.service
 ```
 
-`deploy.sh` stops this repository's server, builds once, and starts the new bundle. The homepage is briefly unavailable during the build. It does not commit or push code.
+This stops the homepage, builds the production bundle, and starts it again. The translator and tunnel keep running. It does not commit or push Git changes.
 
-## Check
+## Verify
 
 ```sh
-systemctl --user status jiajun-homepage.service jiajun-homepage-tunnel.service pdf2zh.service
+curl -I http://127.0.0.1:8082/
 curl -I https://jiajun0805.cc.cd/
-curl -I https://jiajun0805.cc.cd/translate/config
+curl -i https://jiajun0805.cc.cd/translate/config
 ```
 
-Expect `200` for the homepage and `401` for unauthenticated translator config requests. `/translate/` shows the login page. Set provider quotas and clean old uploads as needed.
+Expect `200` for the homepage and `401` for unauthenticated translator config. `/translate/` shows the login form.
+
+Local logs: `journalctl --user -u <unit>`. Aliyun access logs: `journalctl -u caddy` as root. The three-site Caddyfile keeps proxy defaults, upstream gzip for `pisd.cc.cd`, default zstd/gzip for the other sites, and the Cloudflare client-IP trust list.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # `dx bundle` writes dist/public incrementally; stale hashed assets (including CSS) pile up.
 # Keep only the closure reachable from index.html: html → js → wasm → other referenced hashed assets.
-# CSS is compiled with tailwindcss before dx bundle; index.html references its hashed name.
+# The plain stylesheet is bundled by dx itself; index.html references its hashed name.
 set -euo pipefail
 cd "$(dirname "$0")/dist/public"
 

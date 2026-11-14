@@ -1,6 +1,6 @@
 # Jiajun homepage
 
-Rust 2024 + Dioxus 0.7 fullstack + Axum + Tailwind 4. Pixi manages build dependencies. Keep the Web toolchain aligned with MoM-ISEP's `beautification/deep-refinement` branch.
+Rust 2024 + Dioxus 0.7 fullstack + Axum + plain CSS. Pixi manages build dependencies. Do not add a CSS framework or npm build step.
 
 ## Rules
 
@@ -15,13 +15,13 @@ Rust 2024 + Dioxus 0.7 fullstack + Axum + Tailwind 4. Pixi manages build depende
 - `content/posts/`: Markdown articles.
 - `web/build.rs`, `web/src/content.rs`: content compilation and validation.
 - `web/src/site.rs`: profile and project facts.
-- `web/src/app.rs`, `web/tailwind.css`: pages and styles.
+- `web/src/app.rs`, `web/styles.css`: pages and styles.
 - `web/src/main.rs`: SSR process and RSS.
 - `deploy/`: Caddy, SSH, and systemd configuration.
 
 ## Checks and deployment
 
-Run `pixi run web-check`, `pixi run test`, then `pixi run web-build`. Check both server and wasm targets. Compile CSS before bundling; verify shipped assets and changed content. Reconcile writers before final checks and reuse valid evidence.
+Run `pixi run web-check`, `pixi run test`, then `pixi run web-build`. Check both server and wasm targets. Bundle plain CSS directly; verify shipped assets and changed content. Reconcile writers before final checks and reuse valid evidence.
 
 Use `bash deploy/deploy.sh` to stop the exact server before replacing its executable. Never use broad `pkill` patterns. Keep existing 8081/9000 upstreams intact unless explicitly requested. Use Caddy defaults; validate as `caddy` before reload.
 

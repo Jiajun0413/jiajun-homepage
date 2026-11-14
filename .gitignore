@@ -1,8 +1,6 @@
 .pixi/
 web/target/
 web/dist/
-web/node_modules/
-web/assets/
 .env
 .env.*
 access.csv

@@ -5,7 +5,7 @@ use dioxus::prelude::*;
 use crate::model::{Post, POSTS};
 use crate::site::{PROJECTS, SITE};
 
-static TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
+static STYLES: Asset = asset!("/styles.css");
 
 const RECENT_ON_POSTS: usize = 5;
 
@@ -30,7 +30,7 @@ pub fn App() -> Element {
             content: "{SITE.name}'s notes, projects, and paper translation tool."
         }
         document::Meta { name: "color-scheme", content: "light dark" }
-        document::Stylesheet { href: TAILWIND_CSS }
+        document::Stylesheet { href: STYLES }
         Router::<Route> {}
     }
 }

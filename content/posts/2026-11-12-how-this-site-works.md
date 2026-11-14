@@ -9,9 +9,9 @@ This site keeps notes, project links, and a paper translator in one place.
 
 ## Stack
 
-The Web toolchain matches MoM-ISEP's `beautification/deep-refinement` branch: Rust 2024, Dioxus 0.7 fullstack, Axum, Tailwind 4, and Pixi.
+The site uses Rust 2024, Dioxus 0.7 fullstack, Axum, and Pixi.
 
-Dioxus renders the first page on the server. WebAssembly handles later navigation. Tailwind builds the stylesheet; the layout is plain CSS.
+Dioxus renders the first page on the server. WebAssembly handles later navigation. The stylesheet is plain CSS, bundled directly without a CSS framework.
 
 ```sh
 pixi run web-check

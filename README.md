@@ -6,11 +6,11 @@ A small blog with project links and a password-protected paper translator.
 
 ## Stack
 
-Rust 2024, Dioxus 0.7 fullstack, Axum, Tailwind 4, and Pixi. This matches the Web toolchain on MoM-ISEP's `beautification/deep-refinement` branch.
+Rust 2024, Dioxus 0.7 fullstack, Axum, plain CSS, and Pixi. No CSS framework or npm build step.
 
 Markdown becomes HTML at build time. Pages and RSS share one article list. No database, CMS, analytics, or external font CDN.
 
-## Run
+## Development
 
 Install [Pixi](https://pixi.sh/) and [Rust](https://rustup.rs/), then:
 
@@ -29,7 +29,7 @@ pixi run web-build
 IP=127.0.0.1 PORT=8082 pixi run web-serve
 ```
 
-Pixi, Cargo, and npm lockfiles are committed. Tailwind runs before bundling; stale hashed assets are removed afterward.
+Pixi and Cargo lockfiles are committed. Dioxus bundles the stylesheet directly; stale hashed assets are removed afterward.
 
 ## Write
 
@@ -48,15 +48,19 @@ Post content.
 
 The filename becomes `/blog/a-note`. Use lowercase letters, digits, and hyphens. `title` and `date` are required. Front matter supports simple `key: value` fields and comma-separated tags, not full YAML.
 
-Profile and projects: `web/src/site.rs`. Layout and styles: `web/src/app.rs` and `web/tailwind.css`.
+Profile and projects: `web/src/site.rs`. Layout and styles: `web/src/app.rs` and `web/styles.css`.
 
-## Deploy
+## Production
 
-See [deploy/README.md](deploy/README.md).
+See [production startup](deploy/README.md) for exact Aliyun and local commands.
 
-Cloudflare routes to Caddy on Aliyun. SSH Unix sockets connect Caddy to the homepage on `127.0.0.1:8082` and pdf2zh on port `7860`. Three systemd user units keep the apps and tunnel running. `deploy/Caddyfile` records all three sites with explicit routes and Caddy defaults.
+- Public traffic enters Aliyun Caddy on HTTPS port 443.
+- A dedicated SSH service forwards the Aliyun Unix sockets to local `127.0.0.1:8082` (homepage) and `127.0.0.1:7860` (translator).
+- The local machine runs the Dioxus SSR bundle and pdf2zh. Aliyun only terminates TLS and proxies requests; computation and file handling remain local.
+- The 8081/9000 services and their tunnels run on another machine and are managed separately.
+- User-level systemd units keep the homepage, translator, and forwarding tunnel running. `loginctl enable-linger "$USER"` keeps them active after logout and across reboots.
 
-The translator uses pdf2zh's native login, including direct access to port 7860. Credentials stay outside this repository. The current runtime is the locked PyPI package `pdf2zh-next==2.10.2`, not the sibling checkout's Python source. Translation provider credentials and uploaded files also remain outside this repository.
+The translator requires native Gradio login, even on direct port 7860. Credentials and provider keys stay outside Git. Runtime: locked PyPI package `pdf2zh-next==2.10.2` from the sibling Pixi environment.
 
 ## License
 

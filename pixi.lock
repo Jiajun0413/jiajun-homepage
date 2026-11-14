@@ -15,15 +15,9 @@ environments:
       - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
       - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/binaryen-121-h5888daf_0.conda
       - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/esbuild-0.28.1-hfc2019e_0.conda
-      - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/icu-78.3-py310h44b86e0_2.conda
       - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/libgcc-16.2.0-ha9f2e26_7.conda
       - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/libgomp-16.2.0-he0feb66_7.conda
       - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/libstdcxx-16.2.0-h934c35e_7.conda
-      - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/libuv-1.52.1-h280c20c_1.conda
-      - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/libzlib-1.3.2-h25fd6f3_3.conda
-      - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/nodejs-22.23.4-h645b291_1.conda
-      - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/openssl-3.6.5-h781a0a9_0.conda
-      - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/noarch/ca-certificates-2026.10.23-hbd8a1cb_0.conda
 packages:
 - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
   build_number: 20
@@ -56,17 +50,6 @@ packages:
   license_family: MIT
   size: 4486486
   timestamp: 1781248826728
-- conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/icu-78.3-py310h44b86e0_2.conda
-  sha256: 9f07834f0c546ab14d885ce0366285f61f44e326c0edd1fc63b8294e113ae432
-  md5: 72a381cbad04f24b1c2a43ef707f45b4
-  depends:
-  - __glibc >=2.17,<3.0.a0
-  - libstdcxx >=14
-  - libgcc >=14
-  license: MIT
-  license_family: MIT
-  size: 14459115
-  timestamp: 1786545741408
 - conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/libgcc-16.2.0-ha9f2e26_7.conda
   sha256: e031634c3a928f9594eba868bc46ef5230d6571a364a0c63215b06c4563bfcea
   md5: 735629b400b70eeab21a2ba8f5b1c2ce
@@ -101,58 +84,3 @@ packages:
   license_family: GPL
   size: 6615436
   timestamp: 1790303132935
-- conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/libuv-1.52.1-h280c20c_1.conda
-  sha256: 67761d0206f84140047a367eaf9befe03a7e157a29ee25aee0047b40801cc6b6
-  md5: 01c4ed87826af55996768af6dbc936b4
-  depends:
-  - libgcc >=14
-  - __glibc >=2.17,<3.0.a0
-  license: MIT
-  license_family: MIT
-  size: 420040
-  timestamp: 1785914567661
-- conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/libzlib-1.3.2-h25fd6f3_3.conda
-  sha256: eb8a0db0aa570124f7d2a93d7c7f596e3390df5e047818d873baad32985fc736
-  md5: 0de0122d9570a8ab637c6b73db268389
-  depends:
-  - __glibc >=2.17,<3.0.a0
-  constrains:
-  - zlib 1.3.2 *_3
-  license: Zlib
-  license_family: Other
-  size: 63713
-  timestamp: 1785362952714
-- conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/nodejs-22.23.4-h645b291_1.conda
-  sha256: 1b2d5dd2c2a0fcd36315727db7cbdcd355e01df5ec6d6188b1435966ceb5162d
-  md5: 47a9da90baa50b4516ff7d53e9ab5fa2
-  depends:
-  - libstdcxx >=15
-  - libgcc >=15
-  - __glibc >=2.28,<3.0.a0
-  - libzlib >=1.3.2,<2.0a0
-  - icu >=78.3,<79.0a0
-  - libuv >=1.52.1,<2.0a0
-  - openssl >=3.5.9,<4.0a0
-  license: MIT
-  license_family: MIT
-  size: 24166980
-  timestamp: 1793722525195
-- conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/linux-64/openssl-3.6.5-h781a0a9_0.conda
-  sha256: 9c1533f1cf784f0e250919c0c9762d0b0e6bc727a79290ffb7cea1ceca1d038c
-  md5: 5a51a2ea653f120240b1a9bf76e0aae9
-  depends:
-  - __glibc >=2.17,<3.0.a0
-  - ca-certificates
-  - libgcc >=15
-  license: Apache-2.0
-  license_family: Apache
-  size: 3195299
-  timestamp: 1791098052301
-- conda: https://mirrors.nju.edu.cn/anaconda/cloud/conda-forge/noarch/ca-certificates-2026.10.23-hbd8a1cb_0.conda
-  sha256: 95619b9c1184be7175392eeb0ee7eeb5ccf25d280951f4225f2d62e725790be3
-  md5: 3fd02989038a1e1cee627c14c2d73f29
-  depends:
-  - __unix
-  license: ISC
-  size: 130057
-  timestamp: 1792772446739
