@@ -52,13 +52,16 @@ Profile and projects: `web/src/site.rs`. Layout and styles: `web/src/app.rs` and
 
 ## Production
 
-See [production startup](deploy/README.md) for exact Aliyun and local commands.
+The apps run locally. Caddy on Aliyun forwards HTTPS traffic through native SSH loopback tunnels to ports 8082 and 7860. The other machine's 8081/9000 services remain separate.
 
-- Public traffic enters Aliyun Caddy on HTTPS port 443.
-- A dedicated SSH service forwards the Aliyun Unix sockets to local `127.0.0.1:8082` (homepage) and `127.0.0.1:7860` (translator).
-- The local machine runs the Dioxus SSR bundle and pdf2zh. Aliyun only terminates TLS and proxies requests; computation and file handling remain local.
-- The 8081/9000 services and their tunnels run on another machine and are managed separately.
-- User-level systemd units keep the homepage, translator, and forwarding tunnel running. `loginctl enable-linger "$USER"` keeps them active after logout and across reboots.
+```sh
+pixi run start    # Start apps and tunnel
+pixi run status   # Check services
+pixi run deploy   # Rebuild and restart the homepage
+pixi run stop    # Stop local services
+```
+
+See [deployment](deploy/README.md) for the one-time setup. systemd handles startup, logs, and reconnection; no runtime shell wrappers are needed.
 
 The translator requires native Gradio login, even on direct port 7860. Credentials and provider keys stay outside Git. Runtime: locked PyPI package `pdf2zh-next==2.10.2` from the sibling Pixi environment.
 

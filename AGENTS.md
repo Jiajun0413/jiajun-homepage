@@ -23,7 +23,7 @@ Rust 2024 + Dioxus 0.7 fullstack + Axum + plain CSS. Pixi manages build dependen
 
 Run `pixi run web-check`, `pixi run test`, then `pixi run web-build`. Check both server and wasm targets. Bundle plain CSS directly; verify shipped assets and changed content. Reconcile writers before final checks and reuse valid evidence.
 
-Use `bash deploy/deploy.sh` to stop the exact server before replacing its executable. Never use broad `pkill` patterns. Keep existing 8081/9000 upstreams intact unless explicitly requested. Use Caddy defaults; validate as `caddy` before reload.
+Use `pixi run deploy` to stop the managed homepage before rebuilding. Use native Pixi, systemd, and SSH; do not add process scanners, template generators, or runtime tunnel hooks. Keep the other machine's 8081/9000 forwarding intact. Validate Caddy as `caddy` before reload.
 
 The translator uses native Gradio login. Credentials live in `~/.config/pdf2zh/access.csv`, outside Git. Missing credentials must prevent startup. Keep config, uploads, keys, session files, logs, generated bundles, and environments out of commits.
 

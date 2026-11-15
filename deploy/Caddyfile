@@ -29,10 +29,10 @@ jiajun0805.cc.cd, www.jiajun0805.cc.cd {
 		request_body {
 			max_size 50MB
 		}
-		reverse_proxy unix//run/jiajun-homepage/translate.sock
+		reverse_proxy 127.0.0.1:7860
 	}
 	handle {
-		reverse_proxy unix//run/jiajun-homepage/site.sock
+		reverse_proxy 127.0.0.1:8082
 	}
 	log
 }

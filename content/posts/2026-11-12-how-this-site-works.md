@@ -28,7 +28,7 @@ There is no database or admin panel. Publishing a post means adding a file and r
 
 ## Routing
 
-Cloudflare sends requests to Caddy on Aliyun. SSH Unix sockets connect it to the local apps:
+Cloudflare sends requests to Caddy on Aliyun. Native SSH loopback forwards connect it to the local apps:
 
 - `/` and `/blog`: the homepage and posts.
 - `/translate/`: pdf2zh, with its own login.

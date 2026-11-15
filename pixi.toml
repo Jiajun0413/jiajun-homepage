@@ -14,10 +14,18 @@ web-check = { cwd = "web", cmd = "cargo check --no-default-features --features s
 web-test = { cwd = "web", cmd = "cargo test --no-default-features --features server" }
 test = { depends-on = ["web-test"] }
 web-dev = { cwd = "web", cmd = "dx serve --fullstack true" }
-# One dx bundle (HTML + CSS + wasm assets), then prune stale hashed files.
-web-build = { cwd = "web", cmd = "dx bundle --release --out-dir dist && bash prune-dist.sh" }
+# Fresh dist and dx staging per build; cargo target caches stay intact.
+web-build = { cwd = "web", cmd = "rm -rf dist target/dx && dx bundle --release --out-dir dist" }
 web-clean = { cmd = "rm -rf web/dist web/target" }
 web-serve = { cmd = "web/dist/server" }
+
+# Stop, rebuild, then start only when the build succeeds.
+deploy = { cmd = "systemctl --user stop jiajun-homepage.service && pixi run web-build && systemctl --user start jiajun-homepage.service" }
+start = { cmd = "systemctl --user start jiajun-homepage.service pdf2zh.service jiajun-homepage-tunnel.service" }
+stop = { cmd = "systemctl --user stop jiajun-homepage.service pdf2zh.service jiajun-homepage-tunnel.service" }
+status = { cmd = "systemctl --user status jiajun-homepage.service pdf2zh.service jiajun-homepage-tunnel.service --no-pager" }
+# Units carry concrete paths; a plain file install keeps them in sync with the repo.
+install-services = { cmd = "mkdir -p \"$HOME/.config/systemd/user\" && install -m 644 deploy/systemd/*.service \"$HOME/.config/systemd/user/\" && systemctl --user daemon-reload && systemctl --user enable jiajun-homepage.service pdf2zh.service jiajun-homepage-tunnel.service && loginctl enable-linger \"$USER\"" }
 
 [dependencies]
 binaryen = ">=121,<122"  # wasm-opt on PATH for dx

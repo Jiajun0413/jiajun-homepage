@@ -1,13 +1,9 @@
 [Unit]
-Description=jiajun0805.cc.cd SSH reverse tunnel (remote Unix sockets)
-After=network-online.target
-Wants=network-online.target
+Description=jiajun0805.cc.cd SSH reverse tunnel (loopback TCP)
 
 [Service]
 Type=simple
-ExecStartPre=@ROOT@/deploy/tunnel-sockets.sh prepare
-ExecStart=/usr/bin/ssh -F @ROOT@/deploy/ssh.conf -NT homepage-tunnel
-ExecStartPost=@ROOT@/deploy/tunnel-sockets.sh ready
+ExecStart=/usr/bin/ssh -F /dev/null -NT -i /home/liujiajun/.ssh/id_rsa -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o ExitOnForwardFailure=yes -o ConnectTimeout=10 -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -R 127.0.0.1:8082:127.0.0.1:8082 -R 127.0.0.1:7860:127.0.0.1:7860 homepage-tunnel@47.116.43.212
 Restart=always
 RestartSec=5
 

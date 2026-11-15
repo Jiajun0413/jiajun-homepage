@@ -5,7 +5,6 @@ web/dist/
 .env.*
 access.csv
 *.auth-state.json
-deploy/ssh.conf
 *.log
 *.pem
 *.key
