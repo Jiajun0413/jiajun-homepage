@@ -10,7 +10,11 @@ Environment=BROWSER=/usr/bin/true
 Environment=NO_PROXY=localhost,127.0.0.1,::1
 Environment=no_proxy=localhost,127.0.0.1,::1
 ExecStartPre=/usr/bin/grep -Eq '^[^,]+,[^,]+$' %h/.config/pdf2zh/access.csv
-ExecStart=%h/.pixi/bin/pixi run --locked --manifest-path /mnt/netshare2/liujiajun/pdf2zh-next/pixi.toml gui -- --auth-file %h/.config/pdf2zh/access.csv --ui-lang en
+ExecStart=%h/.pixi/bin/pixi run --locked --manifest-path /mnt/netshare2/liujiajun/pdf2zh-next/pixi.toml python -I /mnt/netshare2/liujiajun/jiajun_homepage/deploy/pdf2zh_gui.py \
+    --gui --disable-gui-sensitive-input --disable-config-auto-save \
+    --config-file %h/.config/pdf2zh/config.v3.toml \
+    --openaicompatible --term-openaicompatible --enabled-services OpenAICompatible \
+    --auth-file %h/.config/pdf2zh/access.csv --ui-lang en
 Restart=on-failure
 RestartSec=5
 

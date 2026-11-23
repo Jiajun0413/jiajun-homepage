@@ -48,9 +48,11 @@ The three unit files contain this installation's paths. If moving the checkout, 
 
 On a new Aliyun server, install Caddy, `deploy/Caddyfile`, and the origin certificates. Validate as `caddy`, then enable the service. The current self-signed origin certificates require Cloudflare **Full** mode.
 
-## Translator access
+## Translator configuration
 
-Credentials stay in `~/.config/pdf2zh/access.csv`, mode `0600`, as one `username,password` line. The service requires a valid row before startup. Changing the password requires `systemctl --user restart pdf2zh`; users must log in again.
+The service reads `~/.config/pdf2zh/config.v3.toml` and uses only the `OpenAICompatible` engine for translation and term extraction. The Fengwind endpoint and credentials stay in that file.
+
+Login credentials stay in `~/.config/pdf2zh/access.csv`, mode `0600`, as one `username,password` line. Restart `pdf2zh.service` after editing either file. Users must log in again.
 
 Translation responses are private and uncached. Never commit credentials, provider keys, or uploaded files.
 
